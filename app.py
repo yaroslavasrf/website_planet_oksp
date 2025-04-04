@@ -1,10 +1,22 @@
 from flask import Flask, render_template, request
 from config import Config
-from extensions import db
+from extensions import db, login_manager
 from models import User, Cup
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+db.init_app(app)
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+with app.app_context():
+    db.create_all()
 
 
 @app.route('/')
