@@ -55,6 +55,7 @@ def index():
                                'max_price': max_price
                            })
 
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -71,6 +72,7 @@ def register():
 
     return render_template('register.html', form=form)
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -86,7 +88,6 @@ def login():
         flash('Неверное имя пользователя или пароль', 'danger')
 
     return render_template('login.html', form=form)
-
 
 
 if __name__ == '__main__':
