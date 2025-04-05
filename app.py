@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, url_for, redirect, flash
 from config import Config
-from flask_login import current_user
+from flask_login import current_user, login_user
 from extensions import db, login_manager
-from forms import RegistrationForm
+from forms import RegistrationForm, LoginForm
 from models import User, Cup
 
 app = Flask(__name__)
@@ -70,6 +70,23 @@ def register():
         return redirect(url_for('login'))
 
     return render_template('register.html', form=form)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember.data)
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('index'))
+        flash('Неверное имя пользователя или пароль', 'danger')
+
+    return render_template('login.html', form=form)
+
 
 
 if __name__ == '__main__':
