@@ -1,6 +1,8 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for, redirect, flash
 from config import Config
+from flask_login import current_user
 from extensions import db, login_manager
+from forms import RegistrationForm
 from models import User, Cup
 
 app = Flask(__name__)
@@ -52,6 +54,22 @@ def index():
                                'min_price': min_price,
                                'max_price': max_price
                            })
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Регистрация прошла успешно! Теперь вы можете войти.', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('register.html', form=form)
 
 
 if __name__ == '__main__':
