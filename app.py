@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, url_for, redirect, flash
 from config import Config
-from flask_login import current_user, login_user
+from flask_login import current_user, login_user, logout_user, login_required
 from extensions import db, login_manager
 from forms import RegistrationForm, LoginForm
 from models import User, Cup
@@ -91,7 +91,9 @@ def login():
 
 
 @app.route('/logout')
+@login_required
 def logout():
+    logout_user()
     return redirect(url_for('index'))
 
 
