@@ -1,15 +1,18 @@
-from flask import Flask, render_template, request, url_for, redirect, flash
-from config import Config
-from flask_login import current_user, login_user, logout_user, login_required
-from extensions import db, login_manager
-from forms import RegistrationForm, LoginForm
+from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.utils import secure_filename
+import os
 from models import User, Cup
+from forms import RegistrationForm, LoginForm
+from extensions import db, login_manager
+from config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
 db.init_app(app)
 login_manager.init_app(app)
+
 
 
 @login_manager.user_loader
@@ -95,6 +98,37 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+
+@app.route('/add_cup', methods=['GET', 'POST'])
+@login_required
+def add_cup():
+    if request.method == 'POST':
+        title = request.form['title']
+        description = request.form['description']
+        price = float(request.form['price'])
+        category = request.form['category']
+        color = request.form['color']
+
+        image = request.files['image']
+        filename = secure_filename(image.filename)
+        image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+        new_cup = Cup(
+            title=title,
+            description=description,
+            price=price,
+            image=filename,
+            category=category,
+            color=color
+        )
+
+        db.session.add(new_cup)
+        db.session.commit()
+
+        return redirect(url_for('index'))
+
+    return render_template('add_cup.html')
 
 
 if __name__ == '__main__':

@@ -8,7 +8,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + str(BASE_DIR / 'cups.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = str(BASE_DIR / 'static' / 'images')
-    SECRET_KEY = 'your-secret-key-here'
+    SECRET_KEY = 'ghoeklxWEFPROLJDSV39klekf'
     LOGIN_VIEW = 'login'
     LOGIN_MESSAGE = 'Пожалуйста, войдите для доступа к этой странице.'
     LOGIN_MESSAGE_CATEGORY = 'info'
