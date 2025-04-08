@@ -6,6 +6,7 @@ from models import User, Cup
 from forms import RegistrationForm, LoginForm
 from extensions import db, login_manager
 from config import Config
+from api import init_api
 
 app = Flask(__name__)
 app.config.from_object(Config)
